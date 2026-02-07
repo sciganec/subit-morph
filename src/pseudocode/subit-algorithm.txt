@@ -1,0 +1,57 @@
+SUBIT‑ALGORITHM (PSEUDOCODE)
+
+1. INPUT
+   - Raw byte stream DATA
+
+2. BYTES → BITS
+   - For each byte b in DATA:
+       append binary representation of b (8 bits) to BITSTRING
+
+3. SLIDING WINDOWS (6 BITS)
+   - Initialize COUNTS[64] = zeros
+   - For i from 0 to len(BITSTRING) − 6:
+         WINDOW = BITSTRING[i : i+6]
+         k = integer value of WINDOW (0–63)
+         COUNTS[k] += 1
+
+4. NORMALIZATION
+   - TOTAL = sum(COUNTS)
+   - For each k in 0..63:
+         FREQS[k] = COUNTS[k] / TOTAL
+
+5. 8×8 GRID
+   - GRID is an 8×8 matrix
+   - For each k in 0..63:
+         row = k // 8
+         col = k % 8
+         GRID[row][col] = FREQS[k]
+
+6. 4×4×4 COORDINATES
+   - For each k in 0..63:
+         x = (k >> 4) & 3
+         y = (k >> 2) & 3
+         z =  k       & 3
+         COORD[k] = (x, y, z)
+
+7. ENTROPY (E)
+   - H = − Σ FREQS[k] * log₂(FREQS[k]) for all k with FREQS[k] > 0
+   - E = H / 6
+
+8. ANISOTROPY (A)
+   - Compute mean vector MU = Σ FREQS[k] * COORD[k]
+   - Compute covariance matrix C over COORD[k] weighted by FREQS[k]
+   - Compute eigenvalues λ₁ ≥ λ₂ ≥ λ₃ of C
+   - A = 1 − (λ₂ / λ₁)
+
+9. TENSION (T)
+   - For each k:
+         r[k] = Euclidean distance between COORD[k] and MU
+   - std_r = standard deviation of r[k]
+   - std_p = standard deviation of FREQS[k]
+   - T = std_r / std_p
+
+10. OUTPUT
+    - COUNTS[64]
+    - FREQS[64]
+    - GRID (8×8)
+    - SUBIT‑ADDRESS = (E, A, T)
