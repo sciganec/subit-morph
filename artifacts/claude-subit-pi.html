@@ -1,0 +1,250 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>3D SUBIT-Attractor of π - Interactive</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background: #0a0a0a;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            color: white;
+        }
+        #container {
+            width: 100vw;
+            height: 100vh;
+        }
+        #info {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 15px 20px;
+            border-radius: 8px;
+            border: 1px solid #333;
+            max-width: 350px;
+        }
+        h1 {
+            margin: 0 0 10px 0;
+            font-size: 18px;
+            color: #00d4ff;
+        }
+        p {
+            margin: 5px 0;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+        #controls {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 15px 20px;
+            border-radius: 8px;
+            border: 1px solid #333;
+        }
+        .control-item {
+            margin: 8px 0;
+            font-size: 12px;
+        }
+        #tooltip {
+            position: absolute;
+            background: rgba(0, 0, 0, 0.9);
+            padding: 10px 15px;
+            border-radius: 5px;
+            border: 1px solid #00d4ff;
+            pointer-events: none;
+            display: none;
+            font-size: 13px;
+        }
+    </style>
+</head>
+<body>
+    <div id="container"></div>
+    <div id="info">
+        <h1>3D Binary SUBIT-Attractor of π</h1>
+        <p><strong>Dataset:</strong> 1,000,000 binary bits of π</p>
+        <p><strong>States:</strong> 64 states (4×4×4 cube)</p>
+        <p><strong>Active:</strong> All 64 states visited</p>
+        <p><strong>Transitions:</strong> 128 edges displayed</p>
+    </div>
+    <div id="controls">
+        <div class="control-item"><strong>Controls:</strong></div>
+        <div class="control-item">🖱️ Left drag: Rotate</div>
+        <div class="control-item">🖱️ Right drag: Pan</div>
+        <div class="control-item">🖱️ Scroll: Zoom</div>
+        <div class="control-item">Hover: View state info</div>
+    </div>
+    <div id="tooltip"></div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        const nodes = [{"id": 0, "x": 0.0, "y": 0.0, "z": 0.0, "frequency": 0.015830079150395752, "intensity": 0.9774859287054383, "active": true}, {"id": 1, "x": 0.0, "y": 0.0, "z": 1.0, "frequency": 0.015760078800394, "intensity": 0.8461538461538431, "active": true}, {"id": 2, "x": 0.0, "y": 0.0, "z": 2.0, "frequency": 0.015613078065390328, "intensity": 0.5703564727954974, "active": true}, {"id": 3, "x": 0.0, "y": 0.0, "z": 3.0, "frequency": 0.0156560782803914, "intensity": 0.6510318949343318, "active": true}, {"id": 4, "x": 0.0, "y": 1.0, "z": 0.0, "frequency": 0.015525077625388127, "intensity": 0.4052532833020629, "active": true}, {"id": 5, "x": 0.0, "y": 1.0, "z": 1.0, "frequency": 0.015610078050390252, "intensity": 0.5647279549718569, "active": true}, {"id": 6, "x": 0.0, "y": 1.0, "z": 2.0, "frequency": 0.015648078240391203, "intensity": 0.636022514071295, "active": true}, {"id": 7, "x": 0.0, "y": 1.0, "z": 3.0, "frequency": 0.015671078355391777, "intensity": 0.6791744840525307, "active": true}, {"id": 8, "x": 0.0, "y": 2.0, "z": 0.0, "frequency": 0.015637078185390927, "intensity": 0.6153846153846144, "active": true}, {"id": 9, "x": 0.0, "y": 2.0, "z": 1.0, "frequency": 0.015438077190385951, "intensity": 0.24202626641650965, "active": true}, {"id": 10, "x": 0.0, "y": 2.0, "z": 2.0, "frequency": 0.015651078255391276, "intensity": 0.6416510318949321, "active": true}, {"id": 11, "x": 0.0, "y": 2.0, "z": 3.0, "frequency": 0.015618078090390453, "intensity": 0.5797373358348971, "active": true}, {"id": 12, "x": 0.0, "y": 3.0, "z": 0.0, "frequency": 0.0157040785203926, "intensity": 0.7410881801125658, "active": true}, {"id": 13, "x": 0.0, "y": 3.0, "z": 1.0, "frequency": 0.015661078305391526, "intensity": 0.6604127579737314, "active": true}, {"id": 14, "x": 0.0, "y": 3.0, "z": 2.0, "frequency": 0.015703078515392578, "intensity": 0.7392120075046911, "active": true}, {"id": 15, "x": 0.0, "y": 3.0, "z": 3.0, "frequency": 0.015755078775393876, "intensity": 0.8367729831144435, "active": true}, {"id": 16, "x": 1.0, "y": 0.0, "z": 0.0, "frequency": 0.01569007845039225, "intensity": 0.714821763602248, "active": true}, {"id": 17, "x": 1.0, "y": 0.0, "z": 1.0, "frequency": 0.015550077750388752, "intensity": 0.4521575984990611, "active": true}, {"id": 18, "x": 1.0, "y": 0.0, "z": 2.0, "frequency": 0.015425077125385626, "intensity": 0.2176360225140699, "active": true}, {"id": 19, "x": 1.0, "y": 0.0, "z": 3.0, "frequency": 0.015662078310391552, "intensity": 0.6622889305816126, "active": true}, {"id": 20, "x": 1.0, "y": 1.0, "z": 0.0, "frequency": 0.015622078110390552, "intensity": 0.5872420262664154, "active": true}, {"id": 21, "x": 1.0, "y": 1.0, "z": 1.0, "frequency": 0.015590077950389752, "intensity": 0.5272045028142583, "active": true}, {"id": 22, "x": 1.0, "y": 1.0, "z": 2.0, "frequency": 0.015557077785388927, "intensity": 0.46529080675422, "active": true}, {"id": 23, "x": 1.0, "y": 1.0, "z": 3.0, "frequency": 0.015565077825389127, "intensity": 0.48030018761726007, "active": true}, {"id": 24, "x": 1.0, "y": 2.0, "z": 0.0, "frequency": 0.015591077955389778, "intensity": 0.5290806754221395, "active": true}, {"id": 25, "x": 1.0, "y": 2.0, "z": 1.0, "frequency": 0.01581807909039545, "intensity": 0.9549718574108764, "active": true}, {"id": 26, "x": 1.0, "y": 2.0, "z": 2.0, "frequency": 0.015675078375391876, "intensity": 0.6866791744840491, "active": true}, {"id": 27, "x": 1.0, "y": 2.0, "z": 3.0, "frequency": 0.015532077660388301, "intensity": 0.41838649155722174, "active": true}, {"id": 28, "x": 1.0, "y": 3.0, "z": 0.0, "frequency": 0.015708078540392703, "intensity": 0.7485928705440907, "active": true}, {"id": 29, "x": 1.0, "y": 3.0, "z": 1.0, "frequency": 0.015748078740393703, "intensity": 0.8236397748592879, "active": true}, {"id": 30, "x": 1.0, "y": 3.0, "z": 2.0, "frequency": 0.015572077860389302, "intensity": 0.49343339587241897, "active": true}, {"id": 31, "x": 1.0, "y": 3.0, "z": 3.0, "frequency": 0.015492077460387301, "intensity": 0.34333958724202457, "active": true}, {"id": 32, "x": 2.0, "y": 0.0, "z": 0.0, "frequency": 0.015760078800394, "intensity": 0.8461538461538431, "active": true}, {"id": 33, "x": 2.0, "y": 0.0, "z": 1.0, "frequency": 0.015509077545387728, "intensity": 0.37523452157598597, "active": true}, {"id": 34, "x": 2.0, "y": 0.0, "z": 2.0, "frequency": 0.015522077610388051, "intensity": 0.39962476547842246, "active": true}, {"id": 35, "x": 2.0, "y": 0.0, "z": 3.0, "frequency": 0.015663078315391578, "intensity": 0.6641651031894938, "active": true}, {"id": 36, "x": 2.0, "y": 1.0, "z": 0.0, "frequency": 0.015549077745388726, "intensity": 0.4502814258911799, "active": true}, {"id": 37, "x": 2.0, "y": 1.0, "z": 1.0, "frequency": 0.01565907829539148, "intensity": 0.6566604127579755, "active": true}, {"id": 38, "x": 2.0, "y": 1.0, "z": 2.0, "frequency": 0.015717078585392927, "intensity": 0.7654784240150088, "active": true}, {"id": 39, "x": 2.0, "y": 1.0, "z": 3.0, "frequency": 0.015787078935394678, "intensity": 0.8968105065666039, "active": true}, {"id": 40, "x": 2.0, "y": 2.0, "z": 0.0, "frequency": 0.015603078015390077, "intensity": 0.5515947467166981, "active": true}, {"id": 41, "x": 2.0, "y": 2.0, "z": 1.0, "frequency": 0.01564907824539123, "intensity": 0.6378986866791762, "active": true}, {"id": 42, "x": 2.0, "y": 2.0, "z": 2.0, "frequency": 0.015561077805389028, "intensity": 0.47279549718574165, "active": true}, {"id": 43, "x": 2.0, "y": 2.0, "z": 3.0, "frequency": 0.015504077520387603, "intensity": 0.3658536585365863, "active": true}, {"id": 44, "x": 2.0, "y": 3.0, "z": 0.0, "frequency": 0.015705078525392626, "intensity": 0.742964352720447, "active": true}, {"id": 45, "x": 2.0, "y": 3.0, "z": 1.0, "frequency": 0.015546077730388652, "intensity": 0.4446529080675427, "active": true}, {"id": 46, "x": 2.0, "y": 3.0, "z": 2.0, "frequency": 0.01575307876539383, "intensity": 0.8330206378986875, "active": true}, {"id": 47, "x": 2.0, "y": 3.0, "z": 3.0, "frequency": 0.015309076545382726, "intensity": 0.0, "active": true}, {"id": 48, "x": 3.0, "y": 0.0, "z": 0.0, "frequency": 0.015579077895389476, "intensity": 0.5065666041275778, "active": true}, {"id": 49, "x": 3.0, "y": 0.0, "z": 1.0, "frequency": 0.015635078175390876, "intensity": 0.6116322701688519, "active": true}, {"id": 50, "x": 3.0, "y": 0.0, "z": 2.0, "frequency": 0.01578307891539458, "intensity": 0.8893058161350854, "active": true}, {"id": 51, "x": 3.0, "y": 0.0, "z": 3.0, "frequency": 0.015842079210396053, "intensity": 1.0, "active": true}, {"id": 52, "x": 3.0, "y": 1.0, "z": 0.0, "frequency": 0.01563007815039075, "intensity": 0.6022514071294522, "active": true}, {"id": 53, "x": 3.0, "y": 1.0, "z": 1.0, "frequency": 0.015475077375386876, "intensity": 0.3114446529080664, "active": true}, {"id": 54, "x": 3.0, "y": 1.0, "z": 2.0, "frequency": 0.01569407847039235, "intensity": 0.7223264540337665, "active": true}, {"id": 55, "x": 3.0, "y": 1.0, "z": 3.0, "frequency": 0.015497077485387426, "intensity": 0.3527204502814242, "active": true}, {"id": 56, "x": 3.0, "y": 2.0, "z": 0.0, "frequency": 0.015623078115390578, "intensity": 0.5891181988742966, "active": true}, {"id": 57, "x": 3.0, "y": 2.0, "z": 1.0, "frequency": 0.0158080790403952, "intensity": 0.9362101313320772, "active": true}, {"id": 58, "x": 3.0, "y": 2.0, "z": 2.0, "frequency": 0.015430077150385751, "intensity": 0.22701688555346955, "active": true}, {"id": 59, "x": 3.0, "y": 2.0, "z": 3.0, "frequency": 0.01565907829539148, "intensity": 0.6566604127579755, "active": true}, {"id": 60, "x": 3.0, "y": 3.0, "z": 0.0, "frequency": 0.015723078615393078, "intensity": 0.7767354596622896, "active": true}, {"id": 61, "x": 3.0, "y": 3.0, "z": 1.0, "frequency": 0.015341076705383526, "intensity": 0.060037523452157106, "active": true}, {"id": 62, "x": 3.0, "y": 3.0, "z": 2.0, "frequency": 0.015492077460387301, "intensity": 0.34333958724202457, "active": true}, {"id": 63, "x": 3.0, "y": 3.0, "z": 3.0, "frequency": 0.015711078555392777, "intensity": 0.7542213883677279, "active": true}];
+        const edges = [{"from": 0, "to": 0, "probability": 0.5041061276058117}, {"from": 0, "to": 1, "probability": 0.49589387239418825}, {"from": 1, "to": 2, "probability": 0.4993020304568528}, {"from": 1, "to": 3, "probability": 0.5006979695431472}, {"from": 2, "to": 4, "probability": 0.49868699160955615}, {"from": 2, "to": 5, "probability": 0.5013130083904439}, {"from": 3, "to": 6, "probability": 0.49904190086867656}, {"from": 3, "to": 7, "probability": 0.5009580991313235}, {"from": 4, "to": 8, "probability": 0.5073107890499194}, {"from": 4, "to": 9, "probability": 0.4926892109500805}, {"from": 5, "to": 10, "probability": 0.5062139654067905}, {"from": 5, "to": 11, "probability": 0.49378603459320947}, {"from": 6, "to": 12, "probability": 0.49974437627811863}, {"from": 6, "to": 13, "probability": 0.5002556237218814}, {"from": 7, "to": 14, "probability": 0.505838810541765}, {"from": 7, "to": 15, "probability": 0.49416118945823495}, {"from": 8, "to": 16, "probability": 0.497793694442668}, {"from": 8, "to": 17, "probability": 0.5022063055573319}, {"from": 9, "to": 18, "probability": 0.4942350045342661}, {"from": 9, "to": 19, "probability": 0.505764995465734}, {"from": 10, "to": 20, "probability": 0.5054629097182288}, {"from": 10, "to": 21, "probability": 0.4945370902817711}, {"from": 11, "to": 22, "probability": 0.5011525163273146}, {"from": 11, "to": 23, "probability": 0.4988474836726854}, {"from": 12, "to": 24, "probability": 0.4936958736627611}, {"from": 12, "to": 25, "probability": 0.5063041263372389}, {"from": 13, "to": 26, "probability": 0.5037353936530234}, {"from": 13, "to": 27, "probability": 0.49626460634697656}, {"from": 14, "to": 28, "probability": 0.5010507546328727}, {"from": 14, "to": 29, "probability": 0.4989492453671273}, {"from": 15, "to": 30, "probability": 0.4979371628054586}, {"from": 15, "to": 31, "probability": 0.5020628371945414}, {"from": 16, "to": 32, "probability": 0.5015933715742511}, {"from": 16, "to": 33, "probability": 0.4984066284257489}, {"from": 17, "to": 34, "probability": 0.5028938906752412}, {"from": 17, "to": 35, "probability": 0.49710610932475885}, {"from": 18, "to": 36, "probability": 0.49964343598055105}, {"from": 18, "to": 37, "probability": 0.500356564019449}, {"from": 19, "to": 38, "probability": 0.49687140850466094}, {"from": 19, "to": 39, "probability": 0.5031285914953391}, {"from": 20, "to": 40, "probability": 0.5008961720650364}, {"from": 20, "to": 41, "probability": 0.4991038279349635}, {"from": 21, "to": 42, "probability": 0.4974342527261065}, {"from": 21, "to": 43, "probability": 0.5025657472738935}, {"from": 22, "to": 44, "probability": 0.500932056309057}, {"from": 22, "to": 45, "probability": 0.499067943690943}, {"from": 23, "to": 46, "probability": 0.5064567940893029}, {"from": 23, "to": 47, "probability": 0.49354320591069706}, {"from": 24, "to": 48, "probability": 0.49810788275287027}, {"from": 24, "to": 49, "probability": 0.5018921172471298}, {"from": 25, "to": 50, "probability": 0.4981349181260669}, {"from": 25, "to": 51, "probability": 0.5018650818739331}, {"from": 26, "to": 52, "probability": 0.5023923444976076}, {"from": 26, "to": 53, "probability": 0.49760765550239233}, {"from": 27, "to": 54, "probability": 0.4983260365696626}, {"from": 27, "to": 55, "probability": 0.5016739634303373}, {"from": 28, "to": 56, "probability": 0.5030557677616501}, {"from": 28, "to": 57, "probability": 0.4969442322383499}, {"from": 29, "to": 58, "probability": 0.49549149098298195}, {"from": 29, "to": 59, "probability": 0.504508509017018}, {"from": 30, "to": 60, "probability": 0.5004495247880811}, {"from": 30, "to": 61, "probability": 0.4995504752119188}, {"from": 31, "to": 62, "probability": 0.49864446165762977}, {"from": 31, "to": 63, "probability": 0.5013555383423702}, {"from": 32, "to": 0, "probability": 0.4980964467005076}, {"from": 32, "to": 1, "probability": 0.5019035532994924}, {"from": 33, "to": 2, "probability": 0.49932297375717327}, {"from": 33, "to": 3, "probability": 0.5006770262428267}, {"from": 34, "to": 4, "probability": 0.4985826568741142}, {"from": 34, "to": 5, "probability": 0.5014173431258858}, {"from": 35, "to": 6, "probability": 0.5002234565536615}, {"from": 35, "to": 7, "probability": 0.4997765434463385}, {"from": 36, "to": 8, "probability": 0.49913177696314875}, {"from": 36, "to": 9, "probability": 0.5008682230368512}, {"from": 37, "to": 10, "probability": 0.494859186410371}, {"from": 37, "to": 11, "probability": 0.5051408135896289}, {"from": 38, "to": 12, "probability": 0.5016224470318763}, {"from": 38, "to": 13, "probability": 0.4983775529681237}, {"from": 39, "to": 14, "probability": 0.492557167289542}, {"from": 39, "to": 15, "probability": 0.507442832710458}, {"from": 40, "to": 16, "probability": 0.5066974299814139}, {"from": 40, "to": 17, "probability": 0.4933025700185862}, {"from": 41, "to": 18, "probability": 0.49811489552048055}, {"from": 41, "to": 19, "probability": 0.5018851044795195}, {"from": 42, "to": 20, "probability": 0.49553370606002184}, {"from": 42, "to": 21, "probability": 0.5044662939399781}, {"from": 43, "to": 22, "probability": 0.4985810113519092}, {"from": 43, "to": 23, "probability": 0.5014189886480909}, {"from": 44, "to": 24, "probability": 0.4990767271569564}, {"from": 44, "to": 25, "probability": 0.5009232728430436}, {"from": 45, "to": 26, "probability": 0.5008362279686093}, {"from": 45, "to": 27, "probability": 0.49916377203139073}, {"from": 46, "to": 28, "probability": 0.4976829810194883}, {"from": 46, "to": 29, "probability": 0.5023170189805116}, {"from": 47, "to": 30, "probability": 0.5047357763407146}, {"from": 47, "to": 31, "probability": 0.4952642236592854}, {"from": 48, "to": 32, "probability": 0.5064509917196226}, {"from": 48, "to": 33, "probability": 0.49354900828037745}, {"from": 49, "to": 34, "probability": 0.4926127278541733}, {"from": 49, "to": 35, "probability": 0.5073872721458267}, {"from": 50, "to": 36, "probability": 0.49686371412279035}, {"from": 50, "to": 37, "probability": 0.5031362858772097}, {"from": 51, "to": 38, "probability": 0.5008837268021714}, {"from": 51, "to": 39, "probability": 0.49911627319782853}, {"from": 52, "to": 40, "probability": 0.4976327575175944}, {"from": 52, "to": 41, "probability": 0.5023672424824056}, {"from": 53, "to": 42, "probability": 0.504426494345719}, {"from": 53, "to": 43, "probability": 0.4955735056542811}, {"from": 54, "to": 44, "probability": 0.5041417102077227}, {"from": 54, "to": 45, "probability": 0.4958582897922773}, {"from": 55, "to": 46, "probability": 0.507840227140737}, {"from": 55, "to": 47, "probability": 0.4921597728592631}, {"from": 56, "to": 48, "probability": 0.500096012289573}, {"from": 56, "to": 49, "probability": 0.49990398771042693}, {"from": 57, "to": 50, "probability": 0.5}, {"from": 57, "to": 51, "probability": 0.5}, {"from": 58, "to": 52, "probability": 0.5025923525599482}, {"from": 58, "to": 53, "probability": 0.49740764744005184}, {"from": 59, "to": 54, "probability": 0.5079506992783702}, {"from": 59, "to": 55, "probability": 0.4920493007216297}, {"from": 60, "to": 56, "probability": 0.4910640463015964}, {"from": 60, "to": 57, "probability": 0.5089359536984036}, {"from": 61, "to": 58, "probability": 0.497164461247637}, {"from": 61, "to": 59, "probability": 0.502835538752363}, {"from": 62, "to": 60, "probability": 0.5118770978569585}, {"from": 62, "to": 61, "probability": 0.48812290214304155}, {"from": 63, "to": 62, "probability": 0.49436700400992933}, {"from": 63, "to": 63, "probability": 0.5056329959900706}];
+
+        // Scene setup
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x0a0a0a);
+
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.set(5, 5, 5);
+        camera.lookAt(1.5, 1.5, 1.5);
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.getElementById('container').appendChild(renderer.domElement);
+
+        // Lighting
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+        scene.add(ambientLight);
+
+        const pointLight = new THREE.PointLight(0xffffff, 0.8);
+        pointLight.position.set(10, 10, 10);
+        scene.add(pointLight);
+
+        // Create edges
+        const edgeMaterial = new THREE.LineBasicMaterial({ 
+            color: 0x00d4ff,
+            transparent: true
+        });
+
+        edges.forEach(edge => {
+            const fromNode = nodes[edge.from];
+            const toNode = nodes[edge.to];
+            
+            const geometry = new THREE.BufferGeometry().setFromPoints([
+                new THREE.Vector3(fromNode.x, fromNode.y, fromNode.z),
+                new THREE.Vector3(toNode.x, toNode.y, toNode.z)
+            ]);
+            
+            const material = edgeMaterial.clone();
+            material.opacity = Math.min(0.5, edge.probability * 2);
+            
+            const line = new THREE.Line(geometry, material);
+            scene.add(line);
+        });
+
+        // Create nodes
+        const nodeMeshes = [];
+        const raycaster = new THREE.Raycaster();
+        const mouse = new THREE.Vector2();
+
+        nodes.forEach(node => {
+            const size = 0.05 + 0.15 * node.intensity;
+            const geometry = new THREE.SphereGeometry(size, 32, 32);
+            
+            let color;
+            if (node.active) {
+                // Gradient from cyan to yellow based on intensity
+                const r = node.intensity;
+                const g = 0.8 + 0.2 * node.intensity;
+                const b = 1 - node.intensity;
+                color = new THREE.Color(r, g, b);
+            } else {
+                color = new THREE.Color(0.3, 0.3, 0.3);
+            }
+            
+            const material = new THREE.MeshPhongMaterial({
+                color: color,
+                emissive: node.active ? new THREE.Color(0.1, 0.2, 0.3) : new THREE.Color(0, 0, 0),
+                shininess: 100,
+                transparent: true,
+                opacity: node.active ? 0.9 : 0.4
+            });
+            
+            const sphere = new THREE.Mesh(geometry, material);
+            sphere.position.set(node.x, node.y, node.z);
+            sphere.userData = node;
+            scene.add(sphere);
+            nodeMeshes.push(sphere);
+        });
+
+        // Mouse interaction
+        const tooltip = document.getElementById('tooltip');
+        
+        function onMouseMove(event) {
+            mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+            mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+            raycaster.setFromCamera(mouse, camera);
+            const intersects = raycaster.intersectObjects(nodeMeshes);
+
+            if (intersects.length > 0) {
+                const node = intersects[0].object.userData;
+                tooltip.style.display = 'block';
+                tooltip.style.left = event.clientX + 15 + 'px';
+                tooltip.style.top = event.clientY + 15 + 'px';
+                tooltip.innerHTML = `
+                    <strong>State ${node.id}</strong><br>
+                    Position: (${node.x}, ${node.y}, ${node.z})<br>
+                    Frequency: ${node.frequency.toFixed(6)}
+                `;
+            } else {
+                tooltip.style.display = 'none';
+            }
+        }
+
+        window.addEventListener('mousemove', onMouseMove);
+
+        // Camera controls
+        let isDragging = false;
+        let previousMousePosition = { x: 0, y: 0 };
+        let cameraRotation = { x: 0, y: 0 };
+
+        renderer.domElement.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            previousMousePosition = { x: e.clientX, y: e.clientY };
+        });
+
+        renderer.domElement.addEventListener('mousemove', (e) => {
+            if (isDragging) {
+                const deltaX = e.clientX - previousMousePosition.x;
+                const deltaY = e.clientY - previousMousePosition.y;
+
+                cameraRotation.y += deltaX * 0.005;
+                cameraRotation.x += deltaY * 0.005;
+
+                const radius = 7;
+                camera.position.x = 1.5 + radius * Math.cos(cameraRotation.y) * Math.cos(cameraRotation.x);
+                camera.position.z = 1.5 + radius * Math.sin(cameraRotation.y) * Math.cos(cameraRotation.x);
+                camera.position.y = 1.5 + radius * Math.sin(cameraRotation.x);
+                camera.lookAt(1.5, 1.5, 1.5);
+
+                previousMousePosition = { x: e.clientX, y: e.clientY };
+            }
+        });
+
+        renderer.domElement.addEventListener('mouseup', () => {
+            isDragging = false;
+        });
+
+        renderer.domElement.addEventListener('wheel', (e) => {
+            const zoomSpeed = 0.1;
+            const delta = e.deltaY > 0 ? 1 : -1;
+            
+            const direction = new THREE.Vector3();
+            camera.getWorldDirection(direction);
+            camera.position.addScaledVector(direction, delta * zoomSpeed);
+            
+            e.preventDefault();
+        });
+
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // Animation loop
+        function animate() {
+            requestAnimationFrame(animate);
+            renderer.render(scene, camera);
+        }
+        animate();
+    </script>
+</body>
+</html>
