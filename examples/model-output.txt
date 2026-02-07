@@ -1,0 +1,3 @@
+Model output sample:
+
+The system begins by generating a sequence of tokens based on the input prompt. Each token is influenced by the model’s internal state, attention patterns, and learned statistical structure. As the generation proceeds, the output reflects both local coherence and global stylistic tendencies. Even when the semantic content varies, the underlying byte‑level morphology remains consistent with the model’s characteristic distribution. This makes model‑generated text an ideal subject for SUBIT‑morph analysis, revealing structural signatures that differ from human writing, code, or numerical data.
