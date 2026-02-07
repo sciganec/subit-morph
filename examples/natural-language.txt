@@ -1,0 +1,3 @@
+To understand the morphology of natural language, consider the following sample passage:
+
+Language is not only a vehicle for meaning but also a structure of patterns, rhythms, and repetitions. Even when stripped of semantics, a stream of text carries a distinct morphological signature shaped by its characters, spacing, punctuation, and stylistic habits. These patterns emerge naturally from the way humans write, think, and organize information. When converted into a byte stream and analyzed through sliding windows, natural language reveals a characteristic distribution that differs sharply from code, numbers, or biological sequences. This makes it an ideal domain for demonstrating how SUBIT‑morphs capture the form of information rather than its content.
